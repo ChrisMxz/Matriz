@@ -39,6 +39,7 @@ class Switcher(object):
         #Para linux
         if os.name == "posix":
             os.system ("clear")
+            banner()
         elif os.name == "ce" or os.name == "nt" or os.name == "dos":
             #Para Windows
             os.system ("cls")
