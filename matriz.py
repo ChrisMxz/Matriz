@@ -105,11 +105,12 @@ class Switcher(object):
         """Crear una matriz"""
         f=int(input("Numero de filas: "))
         c=int(input("Numero de Columnas: "))
-        Mtx=np.zeros((f,c))
+        Mtx=np.zeros((f,c), dtype=complex)
         for k in range(f):
             for l in range(c):
                 print("["+str(k+1)+","+str(l+1)+"]",end="")
-                Mtx[k][l]=input("->")
+                z=complex(sy.parse_expr(input("->")))
+                Mtx[k][l]=z
 
         self.addmtx(Mtx)
 
