@@ -88,7 +88,7 @@ class Switcher(object):
                 elif mtd=='-':
                     mtd='resta'
                 else:
-                    mtd=None
+                    mtd=data[1]
 
             elif len(data)>0:
                 mtd=data[0]
@@ -139,6 +139,7 @@ class Switcher(object):
             ('2',"Editar"),
             ('3',"Ver"),
             ('l',"limpiar"),
+            ('h',"ayuda"),
             ('s',"salir")
             ]
         )
@@ -160,7 +161,11 @@ class Switcher(object):
             name=Fore.YELLOW+'Id: {}'.format(obj['id'])+Fore.BLUE
             m='\n{}'.format(obj['matriz'])+Fore.WHITE+'\n'
             print(name+m)
-        
+    #ayuda
+    def metodo_h(self,mtx=None):
+        suma="Suma de matrices\n sintaxis: matriz1 + Matriz2 "
+        soluciona="\nSolucion de matrices \n sintaxis: matriz1 solve Matriz2 "
+        print(suma+soluciona)
 
     def metodo_suma(self,mtx):
         if len(self.mtrxlist)==0:
@@ -193,7 +198,36 @@ class Switcher(object):
                 print(Fore.RED+' Matriz ('+a+') no encontrada'+Fore.WHITE)
             elif bandera2==False:
                 print(Fore.RED+' Matriz ('+b+') no encontrada'+Fore.WHITE)
-            
+    
+    def metodo_solve(self,mtx):
+        #Obteniendo el nombre de las matrices
+        a=mtx[0]
+        b=mtx[2]
+        x1=None
+        x2=None
+        bandera1=False
+        bandera2=False
+        
+        for x in self.mtrxlist:
+            if x['id']==a:
+                x1=x['matriz']
+                bandera1=True
+            if x['id']==b:
+                x2=x['matriz']
+                bandera2=True
+           
+        if bandera1 and bandera2 == True:
+            if np.linalg.det(x1) == 0:
+                x = None
+                print("No se puede resolver")
+            else:
+                x=np.linalg.solve(x1,x2)
+            self.addans(x)
+        elif bandera1==False:
+            print(Fore.RED+' Matriz ('+a+') no encontrada'+Fore.WHITE)
+        elif bandera2==False:
+            print(Fore.RED+' Matriz ('+b+') no encontrada'+Fore.WHITE)
+
     def default(self,argumento=None):
         print("Ingrese una opcion valida")
         
