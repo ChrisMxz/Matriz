@@ -140,7 +140,7 @@ class Switcher(object):
             ('3',"Ver"),
             ('l',"limpiar"),
             ('h',"ayuda"),
-            ('s',"salir")
+            ('s',"salirr")
             ]
         )
         #Muestra el menu
