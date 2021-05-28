@@ -9,11 +9,6 @@ import sympy as sy
 import numpy as np
 from sympy.simplify.fu import L 
 
-
-
-
-
-
 class Mtrx():
     #Matrices creadas o guardadas
     #Constructor sin parametros
@@ -245,8 +240,6 @@ class Mtrx():
                 #Es una instruccion estilo: m1 + m3
                 if self.busqueda(entrada[0])==True and self.busqueda(entrada[2])==True:
                     #Obteniendo las variables a operar
-                    print(str(entrada[0]))
-                    print(str(entrada[2]))
                     l=self.mtrxlist[str(entrada[0])]
                     l2=self.mtrxlist[str(entrada[2])]
                     ma=l[1]
@@ -256,19 +249,19 @@ class Mtrx():
                         if entrada[1]=='+':
                             res=ma+mb
                             self.respuesta(res)
-                            print(self.formato_mtx(res))
+                            print(Fore.GREEN+self.formato_mtx(res)+Fore.WHITE)
                         elif entrada[1]=='-':
                             res=ma-mb
                             self.respuesta(res)
-                            print(self.formato_mtx(res))
+                            print(Fore.GREEN+self.formato_mtx(res)+Fore.WHITE)
                         elif entrada[1]=='*':
                             res = np.dot(ma,mb)
                             self.respuesta(res)
-                            print(self.formato_mtx(res))
+                            print(Fore.GREEN+self.formato_mtx(res)+Fore.WHITE)
                         elif entrada[1]=='x':
                             res = np.cross(ma,mb)
                             self.respuesta(res)
-                            print(self.formato_mtx(res))
+                            print(Fore.GREEN+self.formato_mtx(res)+Fore.WHITE)
                         else:
                             print(Fore.RED+"Operacion no especificada"+Fore.WHITE)
                     except Exception:
