@@ -187,7 +187,10 @@ class Mtrx():
                 else:
                     print(Fore.RED,end='')
             else:
-                print(Fore.GREEN,end='')
+                if obj=="ans":
+                    print(Fore.BLUE,end='')
+                else:
+                    print(Fore.GREEN,end='')
             m='['+obj+'] '
             print(m,end="")
         print(Fore.WHITE)
@@ -265,24 +268,28 @@ class Mtrx():
                     try:
                         if entrada[1]=='+':
                             res=ma+mb
+                            res= sy.simplify(res)
                             self.respuesta(res)
                             self.imprimir(r)
                         elif entrada[1]=='-':
                             res=ma-mb
+                            res= sy.simplify(res)
                             self.respuesta(res)
                             self.imprimir(r)
                         elif entrada[1]=='*':
                             res = ma*mb
+                            res= sy.simplify(res)
                             self.respuesta(res)
                             self.imprimir(r)
                         elif entrada[1]=='x':
-                            res = ma**mb
-                            self.respuesta(res)
-                            self.imprimir(r)
+                            print("desarrollo")
+                            #res = ma**mb
+                            #self.respuesta(res)
+                            #self.imprimir(r)
                         else:
                             print(Fore.RED+"Operacion no especificada"+Fore.WHITE)
                     except Exception:
-                                print(Fore.RED+"Verifica tus matrices"+Fore.WHITE)
+                            print(Fore.RED+"Verifica tus matrices"+Fore.WHITE)
                 elif entrada[0].isdigit()==True and self.busqueda(entrada[2])==True:
                     # <escalar> * <matriz>
                     #Obteniendo las variables a operar
@@ -292,6 +299,7 @@ class Mtrx():
                     try:
                         if entrada[1]=='*':
                             res = float(entrada[0])*ma
+                            res= sy.simplify(res)
                             self.respuesta(res)
                             self.imprimir(r)
                         else:
@@ -307,6 +315,7 @@ class Mtrx():
                     try:
                         if entrada[1]=='*':
                             res = float(entrada[0])*ma
+                            res= sy.simplify(res)
                             self.respuesta(res)
                             self.imprimir(r)
                         else:
@@ -322,6 +331,7 @@ class Mtrx():
                     if entrada[0]=="det":
                          try:
                             res= ma.det()
+                            res= sy.simplify(res)
                             self.respuesta(res)
                             self.imprimir(r)
                          except Exception:
@@ -329,6 +339,7 @@ class Mtrx():
                     elif entrada[0]=="inv":
                         try:
                             res=ma**-1
+                            res= sy.simplify(res)
                             self.respuesta(res)
                             self.imprimir(r)
                         except Exception:
@@ -336,6 +347,7 @@ class Mtrx():
                     elif entrada[0]=="trn":
                         try:
                             res=ma.T
+                            res= sy.simplify(res)
                             self.respuesta(res)
                             self.imprimir(r)
                         except Exception:
