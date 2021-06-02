@@ -202,23 +202,12 @@ class Mtrx():
         f=self.input_num()
         print("Numero de columnas: ",end='')
         c=self.input_num()
-        val="[["
+        Mtx=sy.Matrix.zeros(f,c)
         for k in range(f):
             for l in range(c):
                 print("["+str(k+1)+","+str(l+1)+"]-> ",end="")
                 z=self.input_dato()
-                val=val+str(z)
-                #verificamos que no sea la ultima columna
-                if l+1!=c:
-                    #Agregamos la coma para el siguiente
-                    val=val+","
-            #verificamos que no sea la ultima fila
-            if k+1!=f:
-                #agregamos la separacion de fila
-                val=val+"],["
-        #cerramos la matriz
-        val=val+"]]"
-        Mtx=sy.Matrix(sy.parse_expr(val))
+                Mtx[k,l]=z       
         self.addmtx(Mtx)
     
     #Ejecuta el metodo seleccionado
