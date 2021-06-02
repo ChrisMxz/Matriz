@@ -1,7 +1,6 @@
 from collections import OrderedDict
 from operator import le
 import os
-from numpy.lib.function_base import append
 import pyfiglet
 from colorama import Fore
 from sympy import *
@@ -26,62 +25,81 @@ class Mtrx():
             'ans':[False,None]
         }
         self.letras=None
-    
-    #Sobre carga de operadores
-    def suma(self,comandos=None):
-        l=self.mtrxlist['1']
-        l2=self.mtrxlist['2']
-        try:
-            r=l[1]+l2[2]
-            print(r)
-        except Exception:
-            print("No se puede realizar la suma (verifica las dimenciones)")
-        
-
+    #guarda las variables en un txt para la proxima vez que se habra el programa
+    def guardado_memoria(self,arg=None):
+        txt="slots guardados\n"
+        for i in self.mtrxlist:
+            l=self.mtrxlist[i]
+            if l[0]==True:
+                matriz=l[1]
+                np.savetxt(str(i)+".txt",matriz)
+                txt=txt+str(i)+'\n'
+        fichero = open('info.txt','w')
+        fichero.write(txt)
+        fichero.close
     
     #Metodos
-    def banner(self):
+    def banner(self,text):
         #banner
-        print('-'*30)
-        ascii_banner = pyfiglet.figlet_format("Matriz")
+        ascii_banner = pyfiglet.figlet_format(text)
         print(Fore.GREEN + ascii_banner)
-
-        #Lista de Opciones
-        menu=OrderedDict(
-        [
-            ('1',"Crear"),
-            ('2',"Editar"),
-            ('3',"Eliminar"),
-            ('4',"Ver"),
-            ('5',"Limpiar_Pantalla"),
-            ('6',"Ayuda"),
-            ('0',"Salir")
-            ]
-        )
-        #Muestra el menu
-        print(Fore.YELLOW)
-        for opcion, funcion in menu.items():
-            msj_final='[{}]{} '.format(opcion,funcion)
-            print(msj_final,end="")
         print(Fore.WHITE)
+        self.line_var_status()
+        if text=="Opciones":
+            #Lista de Opciones
+            menu=OrderedDict(
+            [
+                ('1',"Crear"),
+                ('2',"Editar"),
+                ('3',"Eliminar"),
+                ('7',"Ayuda"),
+                ('0',"Volver")
+                ]
+            )
+            #Muestra el menu
+            print(Fore.YELLOW)
+            for opcion, funcion in menu.items():
+                msj_final='[{}] {} '.format(opcion,funcion)
+                print(msj_final)
+            print(Fore.WHITE)
+        elif text=="Matriz":
+            print(Fore.YELLOW+"[1] Opciones\n[2] Limpiar\n[s] Salir"+Fore.WHITE)
+            print('-'*30)
+        elif text=="Crear":
+            print(Fore.YELLOW+"Ingresa los datos correspondientes de la matriz"+Fore.WHITE)
+            print('-'*30)
+        
+
 
     #limpia pantalla
-    def met_5(self,argumento=None):
+    def limpiar(self,argumento=None):
         #Para linux
         if os.name == "posix":
             os.system ("clear")
-            self.banner()
+            self.banner(argumento)
         elif os.name == "ce" or os.name == "nt" or os.name == "dos":
             #Para Windows
             os.system ("cls")
-            self.banner()
-
+            self.banner(argumento)
+            
+            
     def busqueda(self,id=None):
         dato=False
         for x in self.mtrxlist:
             if x==id:
                 dato=True
         return dato
+    def imprimir(self,mtx):
+        if mtx[0]==False:
+            print(Fore.RED+"Vacio")
+        else:
+            print(Fore.GREEN)
+            print(pretty(mtx[1]))
+            #pprint(mtx[1], use_unicode=False)
+
+        print(Fore.WHITE)
+        print('-'*30)
+        
     
     def crea_dic(self):
         palabra = 'abcdefghklmnopqrstuvwxyz'
@@ -92,30 +110,24 @@ class Mtrx():
             else:
                 d[c] = d[c] + 1
         self.letras=d
-    
-    #Da formato a la matriz (imprime)
-    def formato_mtx(self,mtx):
-        dato=str(mtx)
-        dato=dato.replace("[","|")
-        dato=dato.replace("]","|")
-        return dato
-
+   
     #transforma string de entrada en segemntos de definidos por un espacio
     def lineinput(self,comando=None):
         #convirtiendo a string linea ingresada por el usuario
         line=str(comando)
+        line.lower()
         #Partiendo comando en una lista 
         lines=line.split()
         return lines
     
-    #Entrada de un numero para la matriz
-    def input_complex(self):
+    #Entrada de dato para la matriz
+    def input_dato(self):
         bandera=False
         while not bandera:
             en=str(input())
             if len(en)>0:
                 try:
-                    z=complex(sy.parse_expr(en))
+                    z=sy.parse_expr(en)
                     bandera=True
                 except Exception:
                     print("Numero no valido-> ",end='')
@@ -161,78 +173,83 @@ class Mtrx():
         l[0]=True
         l[1]=res
     #Muestra todos las matrices guardadas
-    def met_4(self,arg=None):
-        print("Matrices guardadas")
-        print(Fore.GREEN+'[Usado] '+Fore.RED+'[Vacio] '+Fore.WHITE)
+    def line_var_status(self,arg=None):
+        #print("Matrices guardadas")
+        #print(Fore.GREEN+'[Usado] '+Fore.RED+'[Vacio] '+Fore.WHITE)
         print("Slot:",end="")
         bandera=False
         for obj in self.mtrxlist:
             l=self.mtrxlist[obj]#Obtiene la lista
             status=l[0]
             if status==False:
-                print(Fore.RED,end='')
+                if obj=="ans":
+                    print(Fore.BLUE,end='')
+                else:
+                    print(Fore.RED,end='')
             else:
                 print(Fore.GREEN,end='')
-            if obj=='ans':
-                m='[10'+obj+'] '
-            else:
-                m='['+obj+'] '
+            m='['+obj+'] '
             print(m,end="")
+        print(Fore.WHITE)
             
-        while not bandera:
-            listo=False
-            print(Fore.WHITE)
-            print("Ver slot-> ",end="")
-            
-            while not listo:
-                slot=self.input_num()
-                if slot>0 and slot<11:
-                    listo=True
-            if slot==10:
-                slot='ans'
-                l=self.mtrxlist[slot]
-            else:
-                l=self.mtrxlist["m"+str(slot)]
-
-            if l[0]==False:
-                msj=Fore.RED+"Slot ["+str(slot)+"]\n"+"Vacio"
-            else:
-                msj=Fore.GREEN+"Slot ["+str(slot)+"]\n\n"+self.formato_mtx(l[1])
-            print('-'*len(msj))
-            print(msj+Fore.WHITE)
-            print(Fore.YELLOW+"\nsalir[s/n]",end=''+Fore.WHITE)
-            salir=str(input("-> "))
-            if salir =='s':
-                bandera=True
-
     #Crea una matriz
     def met_1(self,argumento=None):
+        self.limpiar("Crear")
         print("Numero de filas: ",end='')
         f=self.input_num()
         print("Numero de columnas: ",end='')
         c=self.input_num()
-        Mtx=np.zeros((f,c), dtype=complex)
+        val="[["
         for k in range(f):
             for l in range(c):
-                print("["+str(k+1)+","+str(l+1)+"]",end="")
-                z=complex(sy.parse_expr(input("-> ")))
-                Mtx[k][l]=z
+                print("["+str(k+1)+","+str(l+1)+"]-> ",end="")
+                z=self.input_dato()
+                val=val+str(z)
+                #verificamos que no sea la ultima columna
+                if l+1!=c:
+                    #Agregamos la coma para el siguiente
+                    val=val+","
+            #verificamos que no sea la ultima fila
+            if k+1!=f:
+                #agregamos la separacion de fila
+                val=val+"],["
+        #cerramos la matriz
+        val=val+"]]"
+        Mtx=sy.Matrix(sy.parse_expr(val))
         self.addmtx(Mtx)
     
-    #Muestra el menu principal
+    #Ejecuta el metodo seleccionado
     def metodo(self,opc):
         dato=None
         nombre_metodo ="met_"+str(opc)
         metodo = getattr(self, nombre_metodo, lambda default: "No encontrado")
         metodo(dato)
-
-
+    
+    def opciones(self):
+        bandera = False
+        while not bandera:
+            self.limpiar("Opciones")
+            print("->",end='')
+            opc=self.input_num()
+            if opc<8 and opc>0:
+                self.metodo(opc)
+                input("Presione una tecla para continuar...")
+            elif opc==0:
+                bandera=True
+                self.limpiar("Matriz")
+            else:
+                print(Fore.YELLOW+"Elige una opcion valida"+Fore.WHITE)
+                input("Presione una tecla para continuar...")
+            
+            
+   
     def menu(self):
         salir=False
         res=False
-        self.met_5()
+        r=self.mtrxlist["ans"]
+        self.limpiar("Matriz")
         #Bucle para mantenerse en el programa
-        while not salir:   
+        while not salir:
             x=input("-> ")
             entrada=self.lineinput(x)
             #Vericando los 3 opciones
@@ -244,46 +261,105 @@ class Mtrx():
                     l2=self.mtrxlist[str(entrada[2])]
                     ma=l[1]
                     mb=l2[1]
-                    #verifocando operador
+                    #verificando operador
                     try:
                         if entrada[1]=='+':
                             res=ma+mb
                             self.respuesta(res)
-                            print(Fore.GREEN+self.formato_mtx(res)+Fore.WHITE)
+                            self.imprimir(r)
                         elif entrada[1]=='-':
                             res=ma-mb
                             self.respuesta(res)
-                            print(Fore.GREEN+self.formato_mtx(res)+Fore.WHITE)
+                            self.imprimir(r)
                         elif entrada[1]=='*':
-                            res = np.dot(ma,mb)
+                            res = ma*mb
                             self.respuesta(res)
-                            print(Fore.GREEN+self.formato_mtx(res)+Fore.WHITE)
+                            self.imprimir(r)
                         elif entrada[1]=='x':
-                            res = np.cross(ma,mb)
+                            res = ma**mb
                             self.respuesta(res)
-                            print(Fore.GREEN+self.formato_mtx(res)+Fore.WHITE)
+                            self.imprimir(r)
                         else:
                             print(Fore.RED+"Operacion no especificada"+Fore.WHITE)
                     except Exception:
                                 print(Fore.RED+"Verifica tus matrices"+Fore.WHITE)
+                elif entrada[0].isdigit()==True and self.busqueda(entrada[2])==True:
+                    # <escalar> * <matriz>
+                    #Obteniendo las variables a operar
+                    l=self.mtrxlist[str(entrada[2])]
+                    ma=l[1]
+                    #verificando operador
+                    try:
+                        if entrada[1]=='*':
+                            res = float(entrada[0])*ma
+                            self.respuesta(res)
+                            self.imprimir(r)
+                        else:
+                            print(Fore.RED+"Operacion no permitida"+Fore.WHITE)
+                    except Exception:
+                                print(Fore.RED+"Verifica tus matriz"+Fore.WHITE)
+                elif self.busqueda(entrada[0])==True and entrada[2].isdigit()==True:
+                    # <matriz> * <escalar>
+                    #Obteniendo las variables a operar
+                    l=self.mtrxlist[str(entrada[0])]
+                    ma=l[1]
+                    #verificando operador
+                    try:
+                        if entrada[1]=='*':
+                            res = float(entrada[0])*ma
+                            self.respuesta(res)
+                            self.imprimir(r)
+                        else:
+                            print(Fore.RED+"Operacion no permitida"+Fore.WHITE)
+                    except Exception:
+                                print(Fore.RED+"Verifica tus matriz"+Fore.WHITE)
             
             elif len(entrada)==2:
                 #Es una instruccion estilo: trasnpuesta m3
-                 print("tiene 2 elementos")
+                 if self.busqueda(entrada[1])==True: # <comando> <matriz>
+                    l=self.mtrxlist[str(entrada[1])]
+                    ma=l[1]
+                    if entrada[0]=="det":
+                         try:
+                            res= ma.det()
+                            self.respuesta(res)
+                            self.imprimir(r)
+                         except Exception:
+                            print("No se puede calcular el determinante de esta matriz")
+                    elif entrada[0]=="inv":
+                        try:
+                            res=ma**-1
+                            self.respuesta(res)
+                            self.imprimir(r)
+                        except Exception:
+                            print("No se puede calcular la inversa de esta matriz")
+                    elif entrada[0]=="trn":
+                        try:
+                            res=ma.T
+                            self.respuesta(res)
+                            self.imprimir(r)
+                        except Exception:
+                            print("No se puede calcular la transpuesta de esta matriz")
+
+
             elif len(entrada)==1:
-                opc=entrada[0]   
-                if opc.isdigit()==True:
-                    opc=int(opc)
-                    if opc<7 and opc>0:
-                        self.metodo(opc)
-                    elif opc==0:
-                        salir=True
-                        print("Saliendo")
+                if self.busqueda(entrada[0])==True:#verifica si es una variable guardada
+                    l=self.mtrxlist[entrada[0]]
+                    self.imprimir(l)
+                elif entrada[0]=="s":
+                    salir=True
+                    print("Saliendo")
+                elif entrada[0]=="1":
+                    self.opciones()
+                elif entrada[0]=="2":
+                    self.limpiar("Matriz")
             else:
-                print("Escribe bien la instruccion")
+                print("!Escribe bien la instruccion¡")
  
 
 
 if __name__=='__main__':
     mt1=Mtrx()
     mt1.menu()
+    #mt1.guardado_memoria()
+    #mt1.opciones()

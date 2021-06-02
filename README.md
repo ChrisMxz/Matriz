@@ -1,18 +1,43 @@
 ## Ingresando matriz 
 
-    ------------------------------
-     __  __       _        _     
+        __  __       _        _
     |  \/  | __ _| |_ _ __(_)____
     | |\/| |/ _` | __| '__| |_  /
-    | |  | | (_| | |_| |  | |/ / 
+    | |  | | (_| | |_| |  | |/ /
     |_|  |_|\__,_|\__|_|  |_/___|
-    
-    
-    
-    [1]Crear [2]Editar [3]Eliminar [4]Ver [5]Limpiar_Pantalla [6]Ayuda [0]Salir 
+
+
+
+    Slot:[m1] [m2] [m3] [m4] [m5] [m6] [m7] [m8] [m9] [ans]
+    [1] Opciones
+    [2] Limpiar
+    [s] Salir
+    ------------------------------
+    ->
 Escribe el numero de la opción correspondiente
 
     -> 1
+    ___             _
+    / _ \ _ __   ___(_) ___  _ __   ___  ___ 
+    | | | | '_ \ / __| |/ _ \| '_ \ / _ \/ __|
+    | |_| | |_) | (__| | (_) | | | |  __/\__ \
+    \___/| .__/ \___|_|\___/|_| |_|\___||___/
+        |_|
+
+
+    Slot:[m1] [m2] [m3] [m4] [m5] [m6] [m7] [m8] [m9] [ans] 
+
+    [1] Crear 
+    [2] Editar 
+    [3] Eliminar 
+    [4] Variables guardadas 
+    [5] Alternar (Reales<->Complejos) 
+    [6] Limpiar_Pantalla 
+    [7] Ayuda 
+    [0] Volver 
+
+Elije la opcion 1
+    ->1
 
 El programa pedirá  los datos correspondientes
    
@@ -48,17 +73,21 @@ Suma de matrices
 Resta de matrices
  `m1 - m2` 
 
-Producto Punto
+Multiplicacion
 `m1 * m2` 
 
-Producto Cruz
-`m1 x m2` 
+Determinante
+`det m1`
+
+Inversa
+`inv m1`
+
+Transpuesta
+`trn m1`
 
 ## Aun en desarrollo
 
     [2]Editar: Edita los valores dentro de la matriz
     [3]Eliminar: Elimina una matriz dentro de la memoria
     [6]Ayuda: Mensaje de ayuda con los comandos 
-    Determinante m1
-    Transpuesta m1
     Solucionar m1
