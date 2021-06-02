@@ -30,10 +30,7 @@ Escribe el numero de la opción correspondiente
     [1] Crear 
     [2] Editar 
     [3] Eliminar 
-    [4] Variables guardadas 
-    [5] Alternar (Reales<->Complejos) 
-    [6] Limpiar_Pantalla 
-    [7] Ayuda 
+    [4] Ayuda 
     [0] Volver 
 
 Elije la opcion 1
