@@ -7,6 +7,8 @@ from sympy import *
 import sympy as sy
 import numpy as np
 from sympy.simplify.fu import L 
+from sympy.abc import s,v,z,f
+import copy
 
 class Mtrx():
     #Matrices creadas o guardadas
@@ -22,6 +24,7 @@ class Mtrx():
             'm7':[False,None],
             'm8':[False,None],
             'm9':[False,None],
+            'm10':[False,None],
             'ans':[False,None]
         }
         self.letras=None
@@ -130,7 +133,8 @@ class Mtrx():
                     z=sy.parse_expr(en)
                     bandera=True
                 except Exception:
-                    print("Numero no valido-> ",end='')
+                    print(Fore.YELLOW+"Expresion no valida"+Fore.WHITE)
+                    print("-> ",end='')
         return z
     
     #Restige la entrada a solo numeros enteros para seleccion
@@ -146,11 +150,12 @@ class Mtrx():
     #Agrega una matriz al diccionario de variables
     def addmtx(self,mtx):
         listo=False
-        print("Slot a guardar (1-9)-> ",end="")
+        n=len(self.mtrxlist)
+        print("Slot (1-"+str(n-1)+")-> ",end="")
 
         while not listo:
             slot=self.input_num()
-            if slot>0 and slot<10:
+            if slot>0 and slot<n:
                 listo=True
         
         slot=str("m"+str(slot))
@@ -158,7 +163,7 @@ class Mtrx():
         l=self.mtrxlist[slot]
         l[0]=True
         l[1]=mtx
-        print(Fore.GREEN+"Matriz almacenada-> slot "+slot)
+        print(Fore.GREEN+"Guardado -> slot "+slot)
         print(Fore.WHITE)
     
     #Guarda la matriz ans (resultado de una operacion)
@@ -209,7 +214,26 @@ class Mtrx():
                 z=self.input_dato()
                 Mtx[k,l]=z       
         self.addmtx(Mtx)
-    
+
+    def met_2(self,arg=None):
+        self.limpiar("Editar")
+        input()
+
+    def met_3(self,arg=None):
+        self.limpiar("Eliminar")
+        salir=False
+        print("¿Cual slot deseas eliminar?")
+        while not salir:
+            print("-> ",end='')
+            x=self.input_num()
+            if x<10 and x>0:
+                l=self.mtrxlist["m"+str(x)]
+                l[0]=False
+                l[1]=None
+                salir=True
+        print(Fore.RED+"Eliminado -> [m"+str(x)+"]"+Fore.WHITE)
+        
+
     #Ejecuta el metodo seleccionado
     def metodo(self,opc):
         dato=None
@@ -279,15 +303,15 @@ class Mtrx():
                             print(Fore.RED+"Operacion no especificada"+Fore.WHITE)
                     except Exception:
                             print(Fore.RED+"Verifica tus matrices"+Fore.WHITE)
-                elif entrada[0].isdigit()==True and self.busqueda(entrada[2])==True:
-                    # <escalar> * <matriz>
+                elif self.busqueda(entrada[2])==True:
+                    # <valor> * <matriz>
                     #Obteniendo las variables a operar
                     l=self.mtrxlist[str(entrada[2])]
                     ma=l[1]
                     #verificando operador
                     try:
                         if entrada[1]=='*':
-                            res = float(entrada[0])*ma
+                            res = sy.parse_expr(entrada[0])*ma
                             res= sy.simplify(res)
                             self.respuesta(res)
                             self.imprimir(r)
@@ -295,15 +319,15 @@ class Mtrx():
                             print(Fore.RED+"Operacion no permitida"+Fore.WHITE)
                     except Exception:
                                 print(Fore.RED+"Verifica tus matriz"+Fore.WHITE)
-                elif self.busqueda(entrada[0])==True and entrada[2].isdigit()==True:
-                    # <matriz> * <escalar>
+                elif self.busqueda(entrada[0])==True:
+                    # <matriz> * <valor>
                     #Obteniendo las variables a operar
                     l=self.mtrxlist[str(entrada[0])]
                     ma=l[1]
                     #verificando operador
                     try:
                         if entrada[1]=='*':
-                            res = float(entrada[0])*ma
+                            res = sy.parse_expr(entrada[0])*ma
                             res= sy.simplify(res)
                             self.respuesta(res)
                             self.imprimir(r)
@@ -341,12 +365,87 @@ class Mtrx():
                             self.imprimir(r)
                         except Exception:
                             print("No se puede calcular la transpuesta de esta matriz")
+                    elif entrada[0]=="solve":
+                        try:
+                            A=ma[:,:]
+                            b=A.col(-1)
+                            A.col_del(-1)
+                            res= A.solve(b,method='GJ')
+                            res= sy.simplify(res)
+                            self.respuesta(res)
+                            self.imprimir(r)
+                        except Exception:
+                            print("No se puede resolver el sistema")
 
+                    elif entrada[0]=="latex":
+                        try:
+                            print(latex(ma))
+                        except Exception:
+                            print("Memoria vacia")
+                    elif entrada[0]=="code":
+                        try:
+                            print(ma)
+                        except Exception:
+                            print("Memoria vacia")
+                        #Guarda ans -> en un slot
+                    #expande lo guardado en la memoria indicada
+                    elif entrada[0]=="expande":
+                        try:
+                            res=sy.expand(ma)
+                            self.respuesta(res)
+                            self.imprimir(r)
+                        except Exception:
+                            print("No se puede ralizar la accion")
+                    #simplifica lo guardado en la memoria indicada
+                    elif entrada[0]=="simplifica":
+                        try:
+                            res=sy.simplify(ma)
+                            self.respuesta(res)
+                            self.imprimir(r)
+                        except Exception:
+                            print("No se puede ralizar la accion")
 
             elif len(entrada)==1:
                 if self.busqueda(entrada[0])==True:#verifica si es una variable guardada
                     l=self.mtrxlist[entrada[0]]
                     self.imprimir(l)
+                elif entrada[0]=="g":
+                        try:
+                            l=self.mtrxlist['ans']
+                            ans=l[1]
+                            self.addmtx(ans)
+                        except Exception:
+                            print("No se puede ralizar la accion")
+                #expande lo almacenado en el slot ans
+                elif entrada[0]=="expande":
+                        try:
+                            l=self.mtrxlist['ans']
+                            ans=l[1]
+                            res=sy.expand(ans)
+                            self.respuesta(res)
+                            self.imprimir(r)
+                        except Exception:
+                            print("No se puede ralizar la accion")
+                #Factoriza lo almacenado en el slot ans
+                elif entrada[0]=="factoriza":
+                        try:
+                            l=self.mtrxlist['ans']
+                            ans=l[1]
+                            res=sy.factor(ans)
+                            self.respuesta(res)
+                            self.imprimir(r)
+                        except Exception:
+                            print("No se puede ralizar la accion")
+                #Fraccciones parciales a lo almacenado en el slot ans
+                elif entrada[0]=="fracciones":
+                        try:
+                            l=self.mtrxlist['ans']
+                            ans=l[1]
+                            res=sy.apart(ans)
+                            self.respuesta(res)
+                            self.imprimir(r)
+                        except Exception:
+                            print("No se puede ralizar la accion")
                 elif entrada[0]=="s":
                     salir=True
                     print("Saliendo")
