@@ -404,6 +404,22 @@ class Mtrx():
                             self.imprimir(r)
                         except Exception:
                             print("No se puede ralizar la accion")
+                    #Factoriza 
+                    elif entrada[0]=="factoriza":
+                            try:
+                                res=sy.factor(ma)
+                                self.respuesta(res)
+                                self.imprimir(r)
+                            except Exception:
+                                print("No se puede ralizar la accion")
+                    #Fraccciones parciales a lo almacenado en el slot ans
+                    elif entrada[0]=="fracciones":
+                            try:
+                                res=sy.apart(ma)
+                                self.respuesta(res)
+                                self.imprimir(r)
+                            except Exception:
+                                print("No se puede ralizar la accion")
 
             elif len(entrada)==1:
                 if self.busqueda(entrada[0])==True:#verifica si es una variable guardada
