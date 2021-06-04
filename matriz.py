@@ -7,7 +7,7 @@ from sympy import *
 import sympy as sy
 import numpy as np
 from sympy.simplify.fu import L 
-from sympy.abc import s,v,z,f
+from sympy.abc import X, s,v,z,f
 import copy
 
 class Mtrx():
@@ -55,7 +55,7 @@ class Mtrx():
                 ('1',"Crear"),
                 ('2',"Editar"),
                 ('3',"Eliminar"),
-                ('7',"Ayuda"),
+                ('4',"Ayuda"),
                 ('0',"Volver")
                 ]
             )
@@ -136,7 +136,45 @@ class Mtrx():
                     print(Fore.YELLOW+"Expresion no valida"+Fore.WHITE)
                     print("-> ",end='')
         return z
+    def get_posicion(self,mtx=None):
+        salir =False
+        dimension=mtx.shape
+        f=dimension[0]
+        c=dimension[1]
+        print(Fore.BLUE+pretty(mtx)+Fore.WHITE)
+        print("Dimension ["+str(f)+","+str(c)+"]")
+        print("Posicion:")
+        while not salir:
+            print("Fila-> ",end='')
+            k=self.input_num()
+            k=k-1
+            if k>=0 and k<f:
+                salir=true
+            else:
+                print("Vuelva a intentarlo")
+        salir=False
+        while not salir:
+            print("Columna-> ",end='')
+            l=self.input_num()
+            l=l-1
+            if l>=0 and l<c:
+                salir=true
+            else:
+                print("Vuelva a intentarlo")
+        posicion=(k,l)
+        return posicion
+
+    #Obtiene un dato dentro de una matriz
+    def get_dato(self, mtx=None):
+        pos=self.get_posicion(mtx)
+        k=pos[0]
+        l=pos[1]
+        print("\nDato ["+str(k+1)+","+str(l+1)+"]")
+        dato=mtx[k,l]
+        print(Fore.GREEN+pretty(dato)+Fore.WHITE)
+        self.respuesta(dato) #guardamos en ans
     
+
     #Restige la entrada a solo numeros enteros para seleccion
     def input_num(self):
         bandera=False
@@ -145,6 +183,8 @@ class Mtrx():
             if num.isdigit()==True:
                 num=int(num)
                 bandera=True
+            else:
+                print(Fore.YELLOW+"Vuelve a intentarlo-> "+Fore.WHITE,end='')
         return num
     
     #Agrega una matriz al diccionario de variables
@@ -163,7 +203,8 @@ class Mtrx():
         l=self.mtrxlist[slot]
         l[0]=True
         l[1]=mtx
-        print(Fore.GREEN+"Guardado -> slot "+slot)
+        print(Fore.GREEN+pretty(mtx))
+        print("Guardado -> slot "+slot)
         print(Fore.WHITE)
     
     #Guarda la matriz ans (resultado de una operacion)
@@ -215,9 +256,28 @@ class Mtrx():
                 Mtx[k,l]=z       
         self.addmtx(Mtx)
 
-    def met_2(self,arg=None):
+    def met_2(self,met=None):
         self.limpiar("Editar")
-        input()
+        print("¿Cual slot desea editar?")
+        listo=False
+        n=len(self.mtrxlist)
+        print("Slot (1-"+str(n-1)+")-> ",end="")
+        while not listo:
+            slot=self.input_num()
+            if slot>0 and slot<n:
+                listo=True
+        
+        slot=str("m"+str(slot))
+        l=self.mtrxlist[slot]
+        mtx=l[1]
+        pos=self.get_posicion(mtx)
+        print(Fore.BLUE+"Dato a remplazar: ")
+        print(pretty(mtx[pos[0],pos[1]]))
+        print(Fore.YELLOW+"Nuevo dato-> ",end='')
+        x=self.input_dato()
+        mtx[pos[0],pos[1]]=x
+        print(Fore.GREEN+"Valor editado")
+        print(pretty(mtx)+Fore.WHITE)
 
     def met_3(self,arg=None):
         self.limpiar("Eliminar")
@@ -327,7 +387,7 @@ class Mtrx():
                     #verificando operador
                     try:
                         if entrada[1]=='*':
-                            res = sy.parse_expr(entrada[0])*ma
+                            res = sy.parse_expr(entrada[2])*ma
                             res= sy.simplify(res)
                             self.respuesta(res)
                             self.imprimir(r)
@@ -421,6 +481,12 @@ class Mtrx():
                             except Exception:
                                 print("No se puede ralizar la accion")
 
+                    elif entrada[0]=="get":
+                        try:
+                            dato=self.get_dato(ma)
+                        except Exception:
+                            print(Fore.YELLOW+entrada[1]+"\nNo es una matriz o esta vacia"+Fore.WHITE)
+
             elif len(entrada)==1:
                 if self.busqueda(entrada[0])==True:#verifica si es una variable guardada
                     l=self.mtrxlist[entrada[0]]
@@ -462,6 +528,7 @@ class Mtrx():
                             self.imprimir(r)
                         except Exception:
                             print("No se puede ralizar la accion")
+                
                 elif entrada[0]=="s":
                     salir=True
                     print("Saliendo")
