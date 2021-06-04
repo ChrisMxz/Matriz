@@ -1,5 +1,4 @@
 ## Ingresando matriz
-\left[\begin{matrix}23 x^{2}\end{matrix}\right]
 __ __ _ _
 
     | \/ | __ _| |_ _ __(_)____ 
